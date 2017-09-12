@@ -78,6 +78,58 @@ class Connection extends Field {
         });
     }
 
+    /**
+      * generate GraphQl code for [this]
+      */
+    @:keep
+    override function gqlPrint(p : Printer):Void {
+        p.w(p.pre());
+        if (alias != null) {
+            p.w('$alias: ');
+        }
+        p.w( name );
+        if (args != null) {
+            p.writeArgs( args );
+        }
+        p.wln(p.pre() + ' {');
+        p.indent();
+
+        // write pageInfo
+        var pageInfos = [];
+        if ( pagination.endCursor )
+            pageInfos.push('endCursor');
+        if ( pagination.startCursor )
+            pageInfos.push('startCursor');
+        if ( pagination.hasNextPage )
+            pageInfos.push('hasNextPage');
+        if ( pagination.hasPreviousPage )
+            pageInfos.push('hasPreviousPage');
+        p.wln(p.pre() + 'pageInfo {');
+        p.wln(p.pre() + pageInfos.join('\n' + p.pre()));
+        p.wln(p.pre() + '}');
+        // end pageInfo
+
+        // write edges
+        p.wln(p.pre() + 'edges {');
+        p.indent();
+
+        // write node
+        p.wln(p.pre() + 'node {');
+        p.indent();
+        for (e in body) {
+            p.printExpr( e );
+        }
+        p.unindent();
+        // end node
+        p.wln(p.pre() + '}');
+
+        // end edges
+        p.wln(p.pre() + '}');
+
+        p.unindent();
+        p.wln(p.pre() + '}');
+    }
+
 /* === Instance Fields === */
 
     public var page : PageOptions;
