@@ -49,6 +49,33 @@ class Field extends BlockExpression<Field> implements Expression {
         });
     }
 
+    /**
+      * generate GraphQl code for [this]
+      */
+    @:keep
+    public function gqlPrint(p : Printer):Void {
+        p.w(p.pre());
+        if (alias != null) {
+            p.w('$alias: ');
+        }
+        p.w( name );
+        if (args != null) {
+            p.writeArgs( args );
+        }
+        if (body != null) {
+            p.wln('{');
+            p.indent();
+            for (e in body) {
+                p.printExpr( e );
+            }
+            p.unindent();
+            p.wln('}');
+        }
+        else {
+            p.w('\n');
+        }
+    }
+
 /* === Instance Fields === */
 
     public var name : String;
