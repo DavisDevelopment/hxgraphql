@@ -86,5 +86,16 @@ class Document extends BlockExpression<Document> implements Expression {
         }
     }
 
+    /**
+      * convert [this] to Graphql code
+      */
+    public function print(pretty:Bool, ?space:String):String {
+        var printer = new Printer();
+        printer.prettyPrint = pretty;
+        if (space != null)
+            printer.spaces = space;
+        return printer.print( this );
+    }
+
 /* === Instance Fields === */
 }
