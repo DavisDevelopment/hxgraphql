@@ -1,0 +1,22 @@
+{
+    "url": "http://github.com/DavisDevelopment/hxgraphql",
+    "name": "graphql",
+    "description": "GraphQl client and query-builder library for Haxe",
+    "license": "Apache",
+    "contributors": [
+        "DavisDevelopment"
+    ],
+    "version": "0.0.1",
+    "dependencies": {
+        "slambda": "0.8.5",
+        "tnative": "1.2.1"
+    },
+    "tags": [
+        "graphql",
+        "rest",
+        "database",
+        "relay",
+        "query",
+        "client"
+    ]
+}
