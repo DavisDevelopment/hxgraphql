@@ -38,6 +38,18 @@ class Operation extends BlockExpression<Operation> implements Expression {
         });
     }
 
+    /**
+      * generate GraphQl code for [this]
+      */
+    @:keep
+    public function gqlPrint(p : Printer):Void {
+        p.oblock( name );
+        for (e in body) {
+            p.printExpr( e );
+        }
+        p.cblock();
+    }
+
 /* === Instance Fields === */
 
     public var name : Null<String>;
