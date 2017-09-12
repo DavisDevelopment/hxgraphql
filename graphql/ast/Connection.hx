@@ -19,8 +19,8 @@ class Connection extends Field {
         pagination = {
             hasNextPage: true,
             hasPreviousPage: true,
-            startCursor: true,
-            endCursor: true
+            startCursor: false,
+            endCursor: false
         };
         page = options.page;
 
