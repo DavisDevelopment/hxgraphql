@@ -76,5 +76,15 @@ class Document extends BlockExpression<Document> implements Expression {
         return _add(fragment, func);
     }
 
+    /**
+      * create Graphql code for [this]
+      */
+    @:keep
+    public function gqlPrint(printer : Printer):Void {
+        for (e in body) {
+            printer.printExpr( e );
+        }
+    }
+
 /* === Instance Fields === */
 }
