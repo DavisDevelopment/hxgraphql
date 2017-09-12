@@ -34,6 +34,18 @@ class FragmentDeclaration extends BlockExpression<FragmentDeclaration> implement
         });
     }
 
+    /**
+      * generate GraphQl code for [this]
+      */
+    @:keep
+    public function gqlPrint(p : Printer):Void {
+        p.oblock('fragment $name on $onType');
+        for (e in body) {
+            p.printExpr( e );
+        }
+        p.cblock();
+    }
+
 /* === Instance Fields === */
 
     public var name : String;
