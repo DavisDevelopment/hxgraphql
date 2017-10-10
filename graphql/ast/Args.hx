@@ -78,7 +78,6 @@ abstract Args (Array<Arg>) from Array<Arg> to Array<Arg> {
     public static function fromObject(o : Object):Args {
         var args:Args = new Args(new Array());
         for (key in o.keys) {
-            trace( key );
             args.set(key, o.get( key ));
         }
         return args;
