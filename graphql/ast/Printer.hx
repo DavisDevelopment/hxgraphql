@@ -9,6 +9,8 @@ import graphql.ast.Fragment;
 import graphql.ast.FragmentDeclaration;
 import graphql.ast.Operation;
 
+import Type;
+
 using StringTools;
 using tannus.ds.StringUtils;
 using Slambda;
@@ -53,8 +55,73 @@ class Printer {
       * write an argument list
       */
     public function writeArgs(args : Args):Void {
-        var strings = args.map.fn(_.name + ': ' + Std.string( _.value ));
-        write('(' + strings.join(', ') + ')');
+        //var strings = args.map.fn(_.name + ': ' + Std.string( _.value ));
+        //write('(' + strings.join(', ') + ')');
+        write('(');
+        var i = args.iterator();
+        var arg : Arg;
+        while (i.hasNext()) {
+            arg = i.next();
+            write( arg.name );
+            write(': ');
+            writeValue( arg.value );
+            if (i.hasNext()) {
+                write(', ');
+            }
+        }
+        write(')');
+    }
+
+    /**
+      * write an argument value
+      */
+    public function writeValue(value : Dynamic):Void {
+        var json = (untyped __js__('JSON.stringify'));
+        if ((value is Bool) || (value is Float) || (value is String)) {
+            write(json( value ));
+        }
+        else if ((value is Array<Dynamic>)) {
+            writeArray(cast value);
+        }
+        else if (Reflect.isObject( value )) {
+            writeObject( value );
+        }
+        else {
+            write(Std.string( value ));
+        }
+    }
+
+    /**
+      * write an Array value
+      */
+    public function writeArray(a : Array<Dynamic>):Void {
+        write('[');
+        var i = a.iterator();
+        while (i.hasNext()) {
+            writeValue(i.next());
+            if (i.hasNext()) {
+                write(',');
+            }
+        }
+        write(']');
+    }
+
+    /**
+      * write an Object value
+      */
+    public function writeObject(o : Object):Void {
+        write('{');
+        var i = o.pairs().iterator();
+        while (i.hasNext()) {
+            var pair = i.next();
+            write( pair.name );
+            write(':');
+            writeValue( pair.value );
+            if (i.hasNext()) {
+                write(',');
+            }
+        }
+        write('}');
     }
 
     /**
@@ -63,6 +130,10 @@ class Printer {
     public inline function write(x : Dynamic):Void {
         buffer += Std.string( x );
     }
+
+    /**
+      * append [x] to [buffer]
+      */
     public inline function w(x : Dynamic):Void write( x );
 
     /**
@@ -70,9 +141,20 @@ class Printer {
       */
     public inline function writeln(x : Dynamic):Void {
         write( x );
-        write('\n');
+        write(newline());
     }
+
+    /**
+      * append [x], followed by a newline character, to [buffer]
+      */
     public inline function wln(x : Dynamic):Void writeln( x );
+
+    /**
+      * get the character to be used as a newline
+      */
+    public inline function newline():String {
+        return (prettyPrint ? '\n' : ' ');
+    }
 
     /**
       * convert [this] to a String
@@ -136,6 +218,14 @@ class Printer {
         oblock();
         body( this );
         cblock();
+    }
+
+    public function writeBody(body : Null<Array<Expression>>):Void {
+        if (body != null) {
+            for (e in body) {
+                printExpr( e );
+            }
+        }
     }
 
 /* === Instance Fields === */
