@@ -6,6 +6,7 @@ import graphql.ast.Expr;
 import graphql.ast.Field;
 import graphql.ast.Fragment;
 import graphql.ast.Connection;
+import graphql.ast.InlineFragment;
 
 using StringTools;
 using tannus.ds.StringUtils;
@@ -52,6 +53,10 @@ class BlockExpression <T:Expression> {
         return append(new Connection( options ));
     }
 
+    public function appendInlineFragment(options : InlineFragmentOptions):T {
+        return append(new InlineFragment( options ));
+    }
+
     /**
       * add a Field expression
       */
@@ -82,6 +87,13 @@ class BlockExpression <T:Expression> {
       */
     public function addFragment(name : String):T {
         return appendFragment({name: name});
+    }
+
+    public function addInlineFragment(type:String, ?body:Array<Expression>):T {
+        return appendInlineFragment({
+            type: type,
+            body: (body != null ? body : [])
+        });
     }
 
     /**
@@ -126,6 +138,10 @@ class BlockExpression <T:Expression> {
       */
     public function fragment(name:String, ?func:Fragment->Void):Fragment {
         return _add(new Fragment({name: name}), func);
+    }
+
+    public function inlineFragment(type:String, ?func:InlineFragment->Void):InlineFragment {
+        return _add(new InlineFragment({type:type, body:[]}), func);
     }
 
 /* === Instance Fields === */

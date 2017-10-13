@@ -7,6 +7,7 @@ enum Expr {
     EConnection(name:String, ?alias:String, ?args:Args, ?body:Array<Expr>);
     EFragmentDecl(name:String, onType:String, body:Array<Expr>);
     EFragment(name : String);
+    EInlineFragment(onType:String, body:Array<Expr>);
 }
 
 typedef Arg = {
