@@ -6,6 +6,7 @@ import graphql.ast.Expr;
 import graphql.ast.Field;
 import graphql.ast.Fragment;
 import graphql.ast.Connection;
+import graphql.ast.Mutation;
 import graphql.ast.InlineFragment;
 
 using StringTools;
@@ -53,6 +54,10 @@ class BlockExpression <T:Expression> {
         return append(new Connection( options ));
     }
 
+    public function appendMutation(options : MutationOptions):T {
+        return append(new Mutation( options ));
+    }
+
     public function appendInlineFragment(options : InlineFragmentOptions):T {
         return append(new InlineFragment( options ));
     }
@@ -89,6 +94,14 @@ class BlockExpression <T:Expression> {
         return appendFragment({name: name});
     }
 
+    public function addMutation(name:String, args:Args, ?body:Array<Expression>):T {
+        return appendMutation({
+            name: name, 
+            args: args,
+            body: body
+        });
+    }
+
     public function addInlineFragment(type:String, ?body:Array<Expression>):T {
         return appendInlineFragment({
             type: type,
@@ -122,7 +135,7 @@ class BlockExpression <T:Expression> {
     /**
       * create a Connection expression
       */
-    public function connection(name:String, ?alias:String, ?oargs:Object, page:PageOptions, ?pagination:PaginationInfoOptions, ?func:Connection->Void):Connection {
+    public function connection(name:String, ?alias:String, ?oargs:Object, page:Object, ?pagination:PaginationInfoOptions, ?func:Connection->Void):Connection {
         var args = (oargs != null ? Args.fromObject( oargs ) : null);
         return _add(new Connection({
             name: name,
@@ -142,6 +155,13 @@ class BlockExpression <T:Expression> {
 
     public function inlineFragment(type:String, ?func:InlineFragment->Void):InlineFragment {
         return _add(new InlineFragment({type:type, body:[]}), func);
+    }
+
+    public function mutation(name:String, oargs:Object, ?func:Mutation->Void):Mutation {
+        return _add(new Mutation({
+            name: name,
+            args: Args.fromObject( oargs )
+        }), func);
     }
 
 /* === Instance Fields === */

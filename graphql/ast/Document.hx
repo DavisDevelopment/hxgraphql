@@ -1,5 +1,7 @@
 package graphql.ast;
 
+import tannus.ds.Object;
+
 import graphql.ast.Expr;
 import graphql.ast.Field;
 import graphql.ast.Fragment;
@@ -69,6 +71,15 @@ class Document extends BlockExpression<Document> implements Expression {
     }
 
     /**
+      * create, append, and return a 'mutation' operation
+      */
+    override function mutation(name:String, oargs:Object, ?f:Mutation->Void):Mutation {
+        var mut:Operation = new Operation({name: 'mutation', body: []});
+        append( mut );
+        return mut.mutation(name, oargs, f);
+    }
+
+    /**
       * create, append, and return a fragment declaration
       */
     public function createFragment(name:String, onType:String, ?func:FragmentDeclaration->Void):FragmentDeclaration {
@@ -89,7 +100,7 @@ class Document extends BlockExpression<Document> implements Expression {
     /**
       * convert [this] to Graphql code
       */
-    public function print(pretty:Bool, ?space:String):String {
+    public function print(pretty:Bool=false, ?space:String):String {
         var printer = new Printer();
         printer.prettyPrint = pretty;
         if (space != null)
