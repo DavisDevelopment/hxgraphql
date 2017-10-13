@@ -133,6 +133,18 @@ class BlockExpression <T:Expression> {
     }
 
     /**
+      * create multiple Field expressions
+      */
+    public function fields(exprs:Array<String>):Void {
+        for (se in exprs) {
+            var gen = FieldParser.parseString( se );
+            for (field in gen) {
+                append( field );
+            }
+        }
+    }
+
+    /**
       * create a Connection expression
       */
     public function connection(name:String, ?alias:String, ?oargs:Object, page:Object, ?pagination:PaginationInfoOptions, ?func:Connection->Void):Connection {
