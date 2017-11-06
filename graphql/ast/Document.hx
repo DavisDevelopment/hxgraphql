@@ -27,7 +27,7 @@ class Document extends BlockExpression<Document> implements Expression {
       * create and return an Expr from [this]
       */
     public function toExpr():Expr {
-        throw Expr.EDocument(body.map.fn(_.toExpr()));
+        return Expr.EDocument(body.map.fn(_.toExpr()));
     }
 
     /**
