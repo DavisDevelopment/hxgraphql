@@ -1,5 +1,7 @@
 package graphql.ast;
 
+import tannus.ds.Object;
+
 import graphql.ast.Expr;
 import graphql.ast.Field;
 
@@ -42,13 +44,9 @@ class Connection extends Field {
             args = new Args([]);
 
         // copy [page] data onto [args]
-        args.set('first', page.first);
-        if (page.after != null)
-            args.set('after', page.after);
-        if (page.offset != null)
-            args.set('offset', page.offset);
-        if (page.reverse != null)
-            args.set('reverse', page.reverse);
+        for (key in page.keys) {
+            args.set(key, page[key]);
+        }
     }
 
 /* === Instance Methods === */
@@ -91,54 +89,53 @@ class Connection extends Field {
         if (args != null) {
             p.writeArgs( args );
         }
-        p.wln(p.pre() + ' {');
+        p.wln(' {');
         p.indent();
 
         // write pageInfo
-        var pageInfos = [];
-        if ( pagination.endCursor )
-            pageInfos.push('endCursor');
-        if ( pagination.startCursor )
-            pageInfos.push('startCursor');
-        if ( pagination.hasNextPage )
-            pageInfos.push('hasNextPage');
-        if ( pagination.hasPreviousPage )
-            pageInfos.push('hasPreviousPage');
-        p.wln(p.pre() + 'pageInfo {');
-        p.wln(p.pre() + pageInfos.join('\n' + p.pre()));
-        p.wln(p.pre() + '}');
+        var pif = pageInfoField();
+        p.printExpr( pif );
         // end pageInfo
 
         // write edges
-        p.wln(p.pre() + 'edges {');
-        p.indent();
+        p.oblock( 'edges' );
+        p.wln(p.pre() + 'cursor');
 
         // write node
-        p.wln(p.pre() + 'node {');
-        p.indent();
+        p.oblock( 'node' );
         for (e in body) {
             p.printExpr( e );
         }
-        p.unindent();
         // end node
-        p.wln(p.pre() + '}');
+        p.cblock();
 
         // end edges
-        p.wln(p.pre() + '}');
+        p.cblock();
 
-        p.unindent();
-        p.wln(p.pre() + '}');
+        // end connection
+        p.cblock();
+    }
+
+    /**
+      * generate 'pageInfo' Field
+      */
+    private function pageInfoField():Field {
+        var pi = new Field({name:'pageInfo'});
+        pi.field('hasNextPage');
+        pi.field('hasPreviousPage');
+        return pi;
     }
 
 /* === Instance Fields === */
 
-    public var page : PageOptions;
+    //public var page : PageOptions;
+    public var page : Object;
     public var pagination : PaginationInfoOptions;
 }
 
 typedef ConnectionOptions = {
     >FieldOptions,
-    page: PageOptions,
+    page: Object,
     ?pagination: {?hasNextPage:Bool, ?hasPreviousPage:Bool, ?startCursor:Bool, ?endCursor:Bool}
 };
 
