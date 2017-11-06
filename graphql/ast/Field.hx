@@ -63,16 +63,14 @@ class Field extends BlockExpression<Field> implements Expression {
             p.writeArgs( args );
         }
         if (body != null) {
-            p.wln('{');
-            p.indent();
+            p.oblock();
             for (e in body) {
                 p.printExpr( e );
             }
-            p.unindent();
-            p.wln('}');
+            p.cblock();
         }
         else {
-            p.w('\n');
+            p.w(p.newline());
         }
     }
 
